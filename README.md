@@ -70,7 +70,8 @@ src/
    y valida el token con `GET /auth/me`.
 2. `login` / `register` llaman al servicio, guardan `{ token, user }` y pasan a `"authenticated"`.
 3. `request()` de `lib/http.ts` añade `Authorization: Bearer <token>` a cada petición y lanza un
-   `Error` con el mensaje del backend si la respuesta falla.
+   `Error` con el mensaje del backend si la respuesta falla. Si responde **401** con un token guardado,
+   borra la sesión y redirige a `/login`.
 4. Los guards leen `status`:
    - `checking` → muestra loader
    - `unauthenticated` → `ProtectedRoute` redirige a `/login` guardando la ruta de origen

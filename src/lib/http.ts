@@ -1,4 +1,5 @@
 import { env } from "../config/env";
+import { PATHS } from "../router/paths";
 import { sessionStorageService } from "./storage";
 
 /**
@@ -16,6 +17,13 @@ export async function request<T>(method: string, path: string, body?: unknown): 
     },
     body: body ? JSON.stringify(body) : undefined,
   });
+
+  // Token vencido o inválido: cerrar sesión y mandar al login.
+  // (Solo si había token, para no recargar la página al fallar el propio login.)
+  if (res.status === 401 && token) {
+    sessionStorageService.clear();
+    window.location.href = PATHS.login;
+  }
 
   const data = await res.json().catch(() => null);
   if (!res.ok) throw new Error(data?.message ?? `Error ${res.status}`);
