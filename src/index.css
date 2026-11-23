@@ -1,0 +1,90 @@
+:root {
+  --text: #4b4553;
+  --text-h: #08060d;
+  --muted: #8a8392;
+  --bg: #fff;
+  --surface: #faf9fb;
+  --border: #e5e4e7;
+  --accent: #aa3bff;
+  --accent-contrast: #fff;
+  --error: #d33;
+  --code-bg: #f4f3ec;
+
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 16px/1.5 var(--sans);
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #c4c7cf;
+    --text-h: #f3f4f6;
+    --muted: #8b8f99;
+    --bg: #16171d;
+    --surface: #1d1e25;
+    --border: #2e303a;
+    --accent: #c084fc;
+    --accent-contrast: #16171d;
+    --error: #ff6b6b;
+    --code-bg: #1f2028;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+#root { min-height: 100svh; display: flex; flex-direction: column; }
+h1, h2 { color: var(--text-h); font-weight: 600; margin: 0 0 12px; }
+a { color: var(--accent); }
+code, pre { font-family: var(--mono); }
+code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; }
+
+/* ── Layout ── */
+.navbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 12px 24px; border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.navbar nav { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.navbar a { text-decoration: none; color: var(--text); }
+.navbar a.active { color: var(--accent); font-weight: 600; }
+.navbar .brand { font-weight: 700; color: var(--text-h); }
+.content { flex: 1; width: 100%; max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+
+.center-page {
+  flex: 1; display: flex; flex-direction: column; gap: 12px;
+  align-items: center; justify-content: center; padding: 16px;
+}
+.card {
+  width: 100%; max-width: 380px; padding: 28px;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+}
+
+/* ── Formularios ── */
+.form { display: flex; flex-direction: column; gap: 14px; }
+.form label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+input {
+  font: inherit; padding: 8px 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-h);
+}
+input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+button {
+  font: inherit; cursor: pointer; padding: 8px 14px; border: 0; border-radius: 8px;
+  background: var(--accent); color: var(--accent-contrast); font-weight: 600;
+}
+button:disabled { opacity: 0.6; cursor: progress; }
+
+.error { color: var(--error); margin: 0; font-size: 14px; }
+.muted { color: var(--muted); font-size: 14px; margin: 0; }
+.code-block { background: var(--code-bg); padding: 16px; border-radius: 8px; overflow-x: auto; }
+
+.spinner {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
