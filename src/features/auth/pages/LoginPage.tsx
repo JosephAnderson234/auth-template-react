@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useLocation, useNavigate, type Location } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { DEFAULT_PRIVATE_PATH, PATHS } from "../../../router/paths";
 import { useAuth } from "../hooks/useAuth";
 
@@ -7,48 +7,32 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: Location } | null)?.from?.pathname ?? DEFAULT_PRIVATE_PATH;
+  const [error, setError] = useState("");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Si el guard nos mandó aquí, volvemos a la página que se quería abrir.
+  const from = location.state?.from?.pathname ?? DEFAULT_PRIVATE_PATH;
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    const form = new FormData(e.currentTarget);
     try {
-      await login({ email, password });
+      await login({
+        email: String(form.get("email")),
+        password: String(form.get("password")),
+      });
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo iniciar sesión");
-    } finally {
-      setLoading(false);
+      setError((err as Error).message);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="form">
       <h2>Iniciar sesión</h2>
-      <label>
-        Email
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
-      </label>
-      <label>
-        Contraseña
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          autoComplete="current-password"
-        />
-      </label>
+      <input name="email" type="email" placeholder="Email" required />
+      <input name="password" type="password" placeholder="Contraseña" required />
       {error && <p className="error">{error}</p>}
-      <button type="submit" disabled={loading}>
-        {loading ? "Ingresando…" : "Ingresar"}
-      </button>
+      <button type="submit">Ingresar</button>
       <p className="muted">
         ¿No tienes cuenta? <Link to={PATHS.register}>Regístrate</Link>
       </p>

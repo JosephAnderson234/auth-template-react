@@ -1,15 +1,11 @@
 import { env } from "../config/env";
 import type { AuthSession } from "../features/auth/types/auth.types";
 
-/** Persistencia de la sesión. Cambia a sessionStorage o cookies si lo prefieres. */
+/** Guarda la sesión ({ token, user }) en localStorage. */
 export const sessionStorageService = {
   get(): AuthSession | null {
-    try {
-      const raw = localStorage.getItem(env.storageKey);
-      return raw ? (JSON.parse(raw) as AuthSession) : null;
-    } catch {
-      return null;
-    }
+    const raw = localStorage.getItem(env.storageKey);
+    return raw ? JSON.parse(raw) : null;
   },
   set(session: AuthSession) {
     localStorage.setItem(env.storageKey, JSON.stringify(session));
@@ -17,7 +13,7 @@ export const sessionStorageService = {
   clear() {
     localStorage.removeItem(env.storageKey);
   },
-  getToken(): string | null {
+  getToken() {
     return this.get()?.token ?? null;
   },
 };

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { UNAUTHORIZED_EVENT } from "../../../lib/http";
 import { sessionStorageService } from "../../../lib/storage";
 import { authService } from "../services/auth.service";
 import type {
@@ -52,12 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [startSession, logout]);
-
-  // Si cualquier request devuelve 401, cerrar sesión.
-  useEffect(() => {
-    window.addEventListener(UNAUTHORIZED_EVENT, logout);
-    return () => window.removeEventListener(UNAUTHORIZED_EVENT, logout);
-  }, [logout]);
 
   const login = useCallback(
     async (data: LoginRequest) => startSession(await authService.login(data)),

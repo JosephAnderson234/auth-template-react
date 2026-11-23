@@ -1,29 +1,13 @@
 import { env } from "../../../config/env";
-import { api } from "../../../lib/http";
-import type {
-  AuthResponse,
-  LoginRequest,
-  RegisterRequest,
-  User,
-} from "../types/auth.types";
+import { request } from "../../../lib/http";
+import type { AuthResponse, LoginRequest, RegisterRequest, User } from "../types/auth.types";
 import { mockAuthService } from "./auth.mock";
 
-/**
- * Endpoints del backend. Cambia estas rutas para adaptarlas a tu API.
- */
-const ENDPOINTS = {
-  login: "/auth/login",
-  register: "/auth/register",
-  me: "/auth/me",
-} as const;
-
+// Cambia estas rutas para adaptarlas a tu API.
 const realAuthService = {
-  login: (data: LoginRequest) => api.post<AuthResponse>(ENDPOINTS.login, data),
-  register: (data: RegisterRequest) => api.post<AuthResponse>(ENDPOINTS.register, data),
-  /** Valida el token guardado y devuelve el usuario actual. */
-  me: () => api.get<User>(ENDPOINTS.me),
+  login: (data: LoginRequest) => request<AuthResponse>("POST", "/auth/login", data),
+  register: (data: RegisterRequest) => request<AuthResponse>("POST", "/auth/register", data),
+  me: () => request<User>("GET", "/auth/me"),
 };
 
-export type AuthService = typeof realAuthService;
-
-export const authService: AuthService = env.useMockAuth ? mockAuthService : realAuthService;
+export const authService = env.useMockAuth ? mockAuthService : realAuthService;

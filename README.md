@@ -39,14 +39,14 @@ src/
 ├── config/
 │   └── env.ts                   # Variables de entorno tipadas
 ├── lib/
-│   ├── http.ts                  # Cliente fetch: baseURL, Bearer token, errores, 401
+│   ├── http.ts                  # request(): fetch con baseURL y Bearer token
 │   └── storage.ts               # Persistencia de la sesión (localStorage)
 ├── features/
 │   └── auth/                    # Módulo de autenticación (autocontenido)
 │       ├── index.ts             # API pública del módulo
 │       ├── types/auth.types.ts  # User, Role, LoginRequest, AuthResponse…
 │       ├── services/
-│       │   ├── auth.service.ts  # Endpoints reales (+ selector real/mock)
+│       │   ├── auth.service.ts  # login / register / me (real o mock)
 │       │   └── auth.mock.ts     # Backend simulado
 │       ├── context/
 │       │   ├── auth.context.ts  # createContext
@@ -69,8 +69,8 @@ src/
 1. Al cargar, `AuthProvider` lee la sesión de `localStorage`. Si existe, queda en `status: "checking"`
    y valida el token con `GET /auth/me`.
 2. `login` / `register` llaman al servicio, guardan `{ token, user }` y pasan a `"authenticated"`.
-3. `lib/http.ts` añade `Authorization: Bearer <token>` a cada request. Si el backend responde **401**,
-   emite un evento y el `AuthProvider` cierra la sesión automáticamente.
+3. `request()` de `lib/http.ts` añade `Authorization: Bearer <token>` a cada petición y lanza un
+   `Error` con el mensaje del backend si la respuesta falla.
 4. Los guards leen `status`:
    - `checking` → muestra loader
    - `unauthenticated` → `ProtectedRoute` redirige a `/login` guardando la ruta de origen
@@ -112,7 +112,7 @@ Edita `src/router/paths.ts`. Router, guards, navbar y links usan esas constantes
 Amplía el tipo `Role` en `auth.types.ts`. En componentes: `const { hasRole } = useAuth(); hasRole("admin")`.
 
 ### Nuevo módulo (feature)
-Copia la forma de `features/auth/`: `types/`, `services/` (usando `api` de `lib/http`), `hooks/`, `pages/`
+Copia la forma de `features/auth/`: `types/`, `services/` (usando `request` de `lib/http`), `hooks/`, `pages/`
 y un `index.ts` que exporte lo público.
 
 ## Notas de seguridad
